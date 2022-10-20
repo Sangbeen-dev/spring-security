@@ -18,12 +18,13 @@ public class PrincipalDetailsService implements UserDetailsService {
     }
 
     //시큐리티 session(Authentication(내부 UserDetails))
+    //함수 종료시 @AuthenticationPrincipal 어노테이션이 만들어짐
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("username : " + username);
         User userEntity = userRepository.findByUsername(username);
         if (userEntity != null) {
-            return new PrincipalDetail(userEntity);
+            return new PrincipalDetails(userEntity);
         }
         return null;
     }

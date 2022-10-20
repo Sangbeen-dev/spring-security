@@ -9,24 +9,46 @@ package com.example.security.config.auth;
 //Security Session => Authentication => UserDetails(PrincipalDetails)
 
 import com.example.security.model.User;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
-public class PrincipalDetail implements UserDetails {
+@Data
+public class PrincipalDetails implements UserDetails, OAuth2User {
     private final User user;
+    private Map<String, Object> attributes;
 
-    public PrincipalDetail(User user) {
+    //일반 로그인
+    public PrincipalDetails(User user) {
         this.user = user;
+    }
+
+    //Oauth 로그인
+    public PrincipalDetails(User user, Map<String, Object> attributes) {
+        this.user = user;
+        this.attributes = attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public String getName() {
+        return null;
     }
 
     //해당 User의 권한을 리턴
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collect = new ArrayList<>();
-        collect.add((GrantedAuthority) () -> user.getRole());
+        collect.add((GrantedAuthority) user::getRole);
         return collect;
     }
 
